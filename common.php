@@ -652,7 +652,7 @@ function get_siteid($access_token)
     $sharepointSiteAddress = getConfig('sharepointSiteAddress');
     while (substr($sharepointSiteAddress, -1)=='/') $sharepointSiteAddress = substr($sharepointSiteAddress, 0, -1);
     $tmp = splitlast($sharepointSiteAddress, '/');
-    $sharepointname = urlencode($tmp[1]);
+    $sharepointname = $tmp[1];
     $tmp = splitlast($tmp[0], '/');
     $sharepointname = $tmp[1] . '/' . $sharepointname;
     if (getConfig('Drive_ver')=='MS') $url = 'https://graph.microsoft.com/v1.0/sites/root:/'.$sharepointname;
@@ -1159,11 +1159,7 @@ function adminoperate($path)
         if ($moveable) {
             $filename = spurlencode($_GET['move_name']);
             $filename = path_format($path1 . '/' . $filename);
-            if ($_GET['move_folder'] == '/../') {
-                $foldername = path_format('/' . urldecode($path1) . '/');
-                $foldername = substr($foldername, 0, -1);
-                $foldername = splitlast($foldername, '/')[0];
-            } else $foldername = path_format('/' . urldecode($path1) . '/' . $_GET['move_folder']);
+            $foldername = path_format('/'.urldecode($path1).'/'.$_GET['move_folder']);
             $data = '{"parentReference":{"path": "/drive/root:'.$foldername.'"}}';
             $result = MSAPI('PATCH', $filename, $data, $_SERVER['access_token']);
             //savecache('path_' . $path1, json_decode('{}',true), $_SERVER['disktag'], 1);
